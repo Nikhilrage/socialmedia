@@ -1,13 +1,183 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden !important;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+  font-family: Montserrat-Regular;
+  src: url(../src/theme/fonts/Montserrat-Regular.ttf);
+}
+@font-face {
+  font-family: Montserrat-SemiBold;
+  src: url(../src/theme/fonts/Montserrat-SemiBold.ttf);
+}
+@font-face {
+  font-family: Montserrat-Medium;
+  src: url(../src/theme/fonts/Montserrat-Medium.ttf);
+}
+@font-face {
+  font-family: Montserrat-Bold;
+  src: url(../src/theme/fonts/Montserrat-Bold.ttf);
+}
+
+* {
+  transition: 0.3s;
+  font-family: Montserrat-Regular;
+  color: #e8e8e8;
+  font-size: 14px;
+  -webkit-font-smoothing: always;
+}
+
+a {
+  text-decoration: none;
+}
+
+.color-faded {
+  color: #5c5c5c;
+}
+
+.color-blue {
+  color: #0669f8;
+}
+
+.mont-400 {
+  font-family: Montserrat-Regular !important;
+}
+
+.mont-500 {
+  font-family: Montserrat-Medium !important;
+}
+.mont-600 {
+  font-family: Montserrat-SemiBold !important;
+}
+.mont-700 {
+  font-family: Montserrat-Bold !important;
+}
+.font-10 {
+  font-size: 10px;
+}
+.font-12 {
+  font-size: 12px;
+}
+.font-14 {
+  font-size: 14px;
+}
+.font-16 {
+  font-size: 16px;
+}
+.font-24 {
+  font-size: 24px;
+}
+.font-28 {
+  font-size: 28px;
+}
+.flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.height-full {
+  height: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.left-border-hover {
+  position: relative;
+}
+
+.left-border-hover:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 1px;
+  height: 50%;
+  background-color: transparent;
+}
+
+.left-border-hover:hover:after {
+  background-color: #0669f8;
+}
+
+.mini-table {
+  width: 100%;
+  border: 1px solid #2c2c2c;
+  border-radius: 6px;
+}
+
+.mini-table thead th {
+  border-bottom: 1px solid #2c2c2c;
+}
+.mini-table td {
+  padding: 10px;
+  font-size: 12px;
+}
+.mini-table th {
+  color: #5c5c5c;
+  font-size: 12px;
+  padding: 10px;
 }

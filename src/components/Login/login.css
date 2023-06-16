@@ -1,0 +1,27 @@
+.login_image_width {
+  width: 67%;
+}
+.login_form_width {
+  width: 33%;
+  padding-left: 47px;
+  padding-right: 47px;
+}
+
+@media screen and (max-width: 1000px) {
+  .login_image_width {
+    width: 60%;
+  }
+  .login_form_width {
+    width: 40%;
+  }
+}
+@media screen and (max-width: 700px) {
+  .login_image_width {
+    width: 0%;
+  }
+  .login_form_width {
+    width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
