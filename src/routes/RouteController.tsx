@@ -17,13 +17,13 @@ import Signup from "../components/Signup/Signup";
 import NotFoundPage from "../components/NotFoundPage/NotFoundPage";
 import AccessDeniedPage from "../components/AccessDeniedPage/AccessDeniedPage";
 
-const RouteController = ({ localLoggedIn }: any) => {
-  //const userData = useAppSelector(
-  //  (state: any) => state.auth.data,
-  //  shallowEqual
-  //);
-  const userData = false;
-  console.log("route controller");
+const RouteController = () => {
+  const isLoggedIn = getLocalItem("userDetails")?.isLoggedIn;
+  const userData = useAppSelector(
+    (state: any) => state.auth.data,
+    shallowEqual
+  );
+  console.log("isLoggedIn: ", isLoggedIn);
   return (
     <Routes>
       {privateRouteComponents.map((route: any) => (
@@ -33,8 +33,8 @@ const RouteController = ({ localLoggedIn }: any) => {
           element={
             <PrivateRoute
               component={route.component}
-              authenticated={false}
-              userData={false}
+              authenticated={isLoggedIn}
+              userData={userData}
             />
           }
         />
@@ -44,7 +44,7 @@ const RouteController = ({ localLoggedIn }: any) => {
         element={
           <PublicRoute
             component={Login}
-            authenticated={false}
+            authenticated={isLoggedIn}
             userData={userData}
           />
         }
@@ -54,7 +54,7 @@ const RouteController = ({ localLoggedIn }: any) => {
         element={
           <PublicRoute
             component={Signup}
-            authenticated={userData}
+            authenticated={isLoggedIn}
             userData={userData}
           />
         }
@@ -80,9 +80,8 @@ const PrivateRoute = ({
   userData,
 }: Props) => {
   const isAuthenticated = authenticated;
-  const userRoles = userData?.roles;
-  console.log("provate route ");
-  if (isAuthenticated) {
+
+  if (isAuthenticated && userData) {
     return <RouteComponent />;
   }
 
@@ -109,15 +108,9 @@ const PublicRoute = ({
   authenticated,
   userData,
 }: Props) => {
-  const userDetails = getLocalItem("userDetails");
-
   const isAuthenticated = authenticated;
-  //const userRoles = userData?.roles;
 
-  //const userHasRequiredRole =
-  //  _.intersectionWith(userRoles, _.isEqual).length > 0;
-
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !userData) {
     console.log("isAuthenticated if condition");
     return <RouteComponent />;
   }

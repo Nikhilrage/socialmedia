@@ -6,11 +6,6 @@ import { Grid, Typography } from "@mui/material";
 //images
 import PasswordEyeClosed from "../../assets/icons/PasswordEyeClosed.svg";
 import openEye from "../../assets/icons/openEye.svg";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
-import CircleTwoToneIcon from "@mui/icons-material/CircleTwoTone";
-import RadioButtonCheckedTwoToneIcon from "@mui/icons-material/RadioButtonCheckedTwoTone";
 
 import "./signup.css";
 import { pathNames } from "../../routes/pathNames";
@@ -24,20 +19,46 @@ import LoginSignUpLayout from "../../common/LoginSignUpLayout";
 import SMInput from "../../common/SMInput";
 import SMButton from "../../common/SMButton";
 import LoginSignUpFooter from "../../common/LoginSignUpFooter";
-import CustomModal from "../../common/CustomModal/CustomModal";
 import SMSlider from "../../common/SMSlider/SMSlider";
+import logo from "../../assets/images/logo.png";
+//api call
+import { AuthCalls } from "../../api/auth.api";
 
-export interface RegisterProps {}
-
-const Register = (props: RegisterProps) => {
+const Register = () => {
   const navigate = useNavigate();
-  const { sm, md, lg, xl } = useDimensions();
+  const { sm } = useDimensions();
 
-  const [showSignUpStepTwo, setShowSignUpStepTwo] = useState(false);
-  const [openOTPModal, setOpenOtpModal] = useState(false);
-  const [openCropModal, setOpenCropModal] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState();
-  const [uploadedImageFileName, setUploadedImageFileName] = useState<any>();
+  const [showSignUpStep, setShowSignUpStep] = useState(1);
+  const [email, setEmail] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [number, setNumber] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  const registerUser = async () => {
+    try {
+      if (password !== confirmPassword) {
+        alert("Password and confirm password should be same.");
+        return;
+      }
+      const payload = {
+        firstName,
+        lastName,
+        email,
+        password,
+        mobile_number: number,
+      };
+      const res = await AuthCalls.registerUser(payload);
+      if (res?.success) {
+        navigate(pathNames.LOGIN);
+      } else {
+        alert("Something went wrong!");
+      }
+    } catch (e) {
+      console.log("error in registering the user: ", e);
+    }
+  };
 
   return (
     <>
@@ -67,7 +88,7 @@ const Register = (props: RegisterProps) => {
                   {sm && (
                     <Box
                       component={"img"}
-                      src={"Logo"}
+                      src={logo}
                       alt=""
                       width={"57px"}
                       sx={{
@@ -86,7 +107,15 @@ const Register = (props: RegisterProps) => {
                       gap: sm ? 1 : 2,
                     }}
                   >
-                    <SMSlider value={showSignUpStepTwo ? 80 : 18} />
+                    <SMSlider
+                      value={
+                        showSignUpStep === 1
+                          ? 30
+                          : showSignUpStep === 2
+                          ? 60
+                          : 48
+                      }
+                    />
                     <Typography
                       sx={{
                         fontWeight: 600,
@@ -113,24 +142,35 @@ const Register = (props: RegisterProps) => {
                         paddingBottom: 3,
                       }}
                     >
-                      One dashboard <br /> for all offers & NFTs
+                      Be Friends Forever
                     </Typography>
                   )}
                   <Box sx={{ width: "100%", height: "100%" }}>
-                    {showSignUpStepTwo ? (
+                    {showSignUpStep === 1 ? (
                       <>
-                        <SignUpStepTwo
-                          setOpenCropModal={setOpenCropModal}
-                          setUploadedImage={setUploadedImage}
-                          setOpenOtpModal={setOpenOtpModal}
-                          setShowSignUpStepTwo={setShowSignUpStepTwo}
-                          uploadedImageFileName={uploadedImageFileName}
-                          setUploadedImageFileName={setUploadedImageFileName}
+                        <SignUpStepOne
+                          email={email}
+                          setEmail={setEmail}
+                          setShowSignUpStep={setShowSignUpStep}
                         />
                       </>
+                    ) : showSignUpStep === 2 ? (
+                      <SignUpStepTwo
+                        firstName={firstName}
+                        setFirstName={setFirstName}
+                        lastName={lastName}
+                        setLastName={setLastName}
+                        number={number}
+                        setNumber={setNumber}
+                        setShowSignUpStep={setShowSignUpStep}
+                      />
                     ) : (
-                      <SignUpStepOne
-                        setShowSignUpStepTwo={setShowSignUpStepTwo}
+                      <SignUpStepThree
+                        password={password}
+                        setPassword={setPassword}
+                        confirmPassword={confirmPassword}
+                        setConfirmPassword={setConfirmPassword}
+                        registerUser={registerUser}
                       />
                     )}
                   </Box>
@@ -145,30 +185,6 @@ const Register = (props: RegisterProps) => {
           </Box>
         </Box>
       </Box>
-      <CustomModal
-        status={openOTPModal}
-        onClose={() => setOpenOtpModal(false)}
-        closeButton
-        widthInPercent={!xl ? 38 : !lg ? 41 : !md ? 48 : !sm ? 60 : 90}
-      >
-        <>
-          otp
-          {/*<RegisterOtp onClickAction={() => navigate(pathNames.LOGIN)} />*/}
-        </>
-      </CustomModal>
-      {/*<CustomModal
-        status={openCropModal}
-        onClose={() => setOpenCropModal(false)}
-        padding={false}
-        widthInPercent={!xl ? 38 : !lg ? 48 : !md ? 70 : !sm ? 85 : 100}
-      >
-        <CropImage
-          uploadedImage={uploadedImage}
-          setOpenCropModal={setOpenCropModal}
-          setUploadedImageFileName={setUploadedImageFileName}
-          setUploadedImage={setUploadedImage}
-        />
-      </CustomModal>*/}
     </>
   );
 };
@@ -176,23 +192,24 @@ const Register = (props: RegisterProps) => {
 export default Register;
 
 const SignUpStepOne = (props: any) => {
-  const { sm, md, lg, xl } = useDimensions();
+  const { sm } = useDimensions();
 
   return (
     <>
       <SMInput
         placeholder="Email ID"
         label="Email ID"
-        errorStyles={{ paddingLeft: "14px" }}
+        value={props?.email}
+        onChange={(e: any) => props?.setEmail(e.target.value)}
         inputContainerStyles={{
           marginBottom: sm ? "40px" : "35px",
           width: "100%",
         }}
-        error="Email is not valid, Please Enter a valid email."
       />
+
       <SMButton
-        onClick={() => props.setShowSignUpStepTwo(true)}
-        sx={{ padding: "20px 1px" }}
+        onClick={() => props?.setShowSignUpStep(2)}
+        sx={{ padding: "13px 1px" }}
       >
         Get Started
       </SMButton>
@@ -201,140 +218,79 @@ const SignUpStepOne = (props: any) => {
 };
 
 const SignUpStepTwo = ({
-  setOpenCropModal,
-  setUploadedImage,
-  setOpenOtpModal,
-  setShowSignUpStepTwo,
-  uploadedImageFileName,
-  setUploadedImageFileName,
+  firstName,
+  lastName,
+  number,
+  setFirstName,
+  setLastName,
+  setNumber,
+  setShowSignUpStep,
 }: any) => {
-  const { sm, md, lg, xl } = useDimensions();
-  const [anchorEl, setAnchorEl] = useState<any>(null);
-
   return (
-    <Box
-      className="signUpStepTwo"
-      sx={{
-        height: sm ? "80%" : "100%",
-      }}
-    >
-      <Box className="form_overflow" sx={{ flexGrow: 1 }}>
+    <Box>
+      <Box className="" sx={{ mb: 2 }}>
         <SMInput
-          label="Your Name"
-          placeholder={"Your Name"}
+          label="First Name"
+          placeholder={"First Name"}
+          value={firstName}
+          onChange={(e: any) => setFirstName(e.target.value)}
           styles={{ paddingLeft: 17 }}
           inputContainerStyles={{ marginBottom: "10px" }}
-          errorStyles={{ paddingLeft: "10px" }}
         />
-        <Box sx={{ pt: 1, pb: 2 }}>
-          <Box className="file_upload_box" sx={{}}>
-            <Box className="overlay_file_upload_content">
-              <span
-                className="mont-400"
-                style={{ fontSize: 12, color: "#E8E8E8" }}
-              >
-                {uploadedImageFileName
-                  ? uploadedImageFileName
-                  : "Your Profile picture"}
-              </span>
-              <Box sx={{ width: "30px" }}>
-                {!uploadedImageFileName ? (
-                  <FileUploadOutlinedIcon />
-                ) : (
-                  <CheckCircleOutlinedIcon />
-                )}
-              </Box>
-            </Box>
-            <input
-              type="file"
-              className="file_upload"
-              accept=".png, .jpg, .jpeg"
-              onChange={(e: any) => {
-                setOpenCropModal(true);
-                setUploadedImageFileName(e.target.files[0]?.name);
-                setUploadedImage(URL.createObjectURL(e.target.files[0]));
-              }}
-            />
-          </Box>
-          <Stack
-            flexDirection="row"
-            justifyContent={"space-between"}
-            sx={{ mt: "6px" }}
-          >
-            <Typography
-              className="mont-400"
-              sx={{
-                fontSize: 10,
-                color: "#5C5C5C",
-                pr: 2,
-                pl: "19px",
-              }}
-            >
-              File Format: JPG, JPEG 2000, PNG{" "}
-            </Typography>
-            <Typography
-              className="mont-400"
-              sx={{ fontSize: 10, color: "#5C5C5C" }}
-            >
-              File Limit: 10 MB
-            </Typography>
-          </Stack>
-        </Box>
-        <Box>
-          <SMInput
-            label="Create Password"
-            placeholder={"Create Password"}
-            inputIcon={openEye}
-            styles={{ paddingLeft: 17 }}
-            inputContainerStyles={{ marginBottom: "10px" }}
-            errorStyles={{ paddingLeft: "10px" }}
-          />
-          <Grid container columns={12} sx={{ marginBottom: 1 }}>
-            {passwordCheckConditions.map((item: any, index: number) => (
-              <Grid item xs={6} sm={6} md={4} xl={4} sx={{ pr: 2 }}>
-                <Stack
-                  key={index}
-                  flexDirection={"row"}
-                  alignItems="center"
-                  sx={{ pr: 2, pb: 2 }}
-                >
-                  <Box sx={{ width: "18px" }}>
-                    {item.status === null ? (
-                      <CircleOutlinedIcon />
-                    ) : !item.status ? (
-                      <CircleTwoToneIcon />
-                    ) : (
-                      <RadioButtonCheckedTwoToneIcon />
-                    )}
-                  </Box>
-                  <Typography
-                    className="mont-400"
-                    sx={{
-                      fontSize: { xs: 10, lg: 12 },
-                      whiteSpace: "nowrap",
-                      paddingLeft: "4px",
-                      color: !item.status ? "#5C5C5C" : "#E8E8E8",
-                      pl: "7px",
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                </Stack>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
         <SMInput
-          label="Confirm Password"
-          placeholder={"Confirm Password"}
-          type={"password"}
-          inputIcon={PasswordEyeClosed}
+          label="Last Name"
+          placeholder={"Last Name"}
+          value={lastName}
+          onChange={(e: any) => setLastName(e.target.value)}
           styles={{ paddingLeft: 17 }}
-          inputContainerStyles={{ marginBottom: "13px" }}
-          errorStyles={{ paddingLeft: "10px" }}
+          inputContainerStyles={{ marginBottom: "10px" }}
+        />
+        <SMInput
+          label="Mobile Number"
+          placeholder={"Mobile Number"}
+          value={number}
+          onChange={(e: any) => setNumber(e.target.value)}
+          styles={{ paddingLeft: 17 }}
+          inputContainerStyles={{ marginBottom: "10px" }}
         />
       </Box>
+      <SMButton
+        sx={{ padding: "13px 1px" }}
+        onClick={() => setShowSignUpStep(3)}
+      >
+        Next
+      </SMButton>
+    </Box>
+  );
+};
 
+const SignUpStepThree = (props: any) => {
+  const navigate = useNavigate();
+  const { sm } = useDimensions();
+
+  return (
+    <>
+      <Box>
+        <SMInput
+          label="Create Password"
+          placeholder={"Create Password"}
+          value={props?.password}
+          onChange={(e: any) => props?.setPassword(e.target.value)}
+          inputIcon={openEye}
+          styles={{ paddingLeft: 17 }}
+          inputContainerStyles={{ marginBottom: "10px" }}
+        />
+      </Box>
+      <SMInput
+        label="Confirm Password"
+        placeholder={"Confirm Password"}
+        type={"password"}
+        value={props?.confirmPassword}
+        onChange={(e: any) => props?.setConfirmPassword(e.target.value)}
+        inputIcon={PasswordEyeClosed}
+        styles={{ paddingLeft: 17 }}
+        inputContainerStyles={{ marginBottom: "13px" }}
+      />
       <Box sx={{ paddingTop: "10px" }}>
         <label className="checkbox_signup">
           <div>
@@ -347,89 +303,26 @@ const SignUpStepTwo = ({
                 fontSize: "12px",
                 fontWeight: 400,
                 color: "#E8E8E8",
+                paddingBottom: 10,
               }}
             >
-              Creating an account means you accept our{" "}
-              <a
-                href=" "
-                style={{
-                  color: "#0669F8",
-                  textDecoration: "underline",
-                  fontSize: "12px",
-                  fontWeight: 400,
-                }}
-              >
-                Terms of service
-              </a>{" "}
-              and{" "}
-              <a
-                href=" "
-                style={{
-                  color: "#0669F8",
-                  textDecoration: "underline",
-                  fontSize: "12px",
-                  fontWeight: 400,
-                }}
-              >
-                Privacy Policy.
-              </a>
+              Creating an account means you accept our Terms of service Privacy
+              Policy.
             </span>
           </div>
         </label>
 
         <SMButton
-          onClick={() => {
-            setOpenOtpModal(true);
-          }}
+          onClick={props?.registerUser}
           sx={{
             width: "100%",
-            padding: sm ? "15px 1px" : "17px 1px",
             mt: 2,
-            py: 1,
+            padding: "13px 1px",
           }}
         >
           Confirm
         </SMButton>
-        <a
-          href="https:app.getsafle.com/signup"
-          className="mont-400"
-          target="blank"
-          rel="noreferrer"
-        >
-          <span
-            style={{
-              color: "#0669F8",
-              fontSize: 12,
-              textDecoration: "underline",
-              textAlign: "center",
-              width: "100%",
-              display: "block",
-              marginTop: "20px",
-            }}
-          >
-            Don’t have a SafleID yet? Get one here
-          </span>
-        </a>
       </Box>
-    </Box>
+    </>
   );
 };
-
-const passwordCheckConditions = [
-  {
-    label: "one lowercase",
-    status: null,
-  },
-  {
-    label: "one uppercase",
-    status: false,
-  },
-  {
-    label: "one number",
-    status: true,
-  },
-  {
-    label: "8 characters minimum",
-    status: null,
-  },
-];

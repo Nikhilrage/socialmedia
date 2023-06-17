@@ -15,18 +15,9 @@ const auth = createSlice({
     loginAction: (state, action: PayloadAction<any>) => {
       state.loggedIn = action.payload;
       state.data = action.payload;
-      // will be used once started implementing functionality
-      //state.data = { roles: [action.payload?.type] };
-      //setLocalItem("loggedIn", { roles: [action.payload?.type] });
-      //setLocalItem("userDetails", action.payload);
     },
     logoutAction: () => {
-      // removeAllItem()
-      // localStorage.removeItem('persist:root')
       localStorage.removeItem("userDetails");
-      localStorage.removeItem("profileCompleted");
-      localStorage.removeItem("userDetails2");
-      localStorage.removeItem("loggedIn");
       setTimeout(() => {
         window.location.reload();
       }, 1000);

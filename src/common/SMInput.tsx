@@ -9,8 +9,6 @@ interface SMInputProps {
   classes?: any;
   inputIcon?: any;
   iconToLeft?: boolean;
-  error?: string;
-  errorStyles?: any;
   bottomLabel?: string;
   bottomLabelStyles?: any;
   inputContainerStyles?: any;
@@ -32,8 +30,6 @@ const SMInput = ({
   styles,
   classes,
   inputIcon,
-  error,
-  errorStyles,
   bottomLabel,
   bottomLabelStyles,
   inputContainerStyles,
@@ -71,33 +67,22 @@ const SMInput = ({
             height: height,
             width: "100%",
             outline: "none",
-            border: error ? "1px solid #EB5757" : "none",
+            border: "none",
             background: dark ? "#0C0C0C" : "#161616",
             color: "#E8E8E8",
             marginTop: mt ? 3 : "unset",
+            opacity: disabled && 0.4,
             display: "flex",
             paddingLeft: "20px",
             borderRadius: "4px",
             ...styles,
           }}
         />
-        {(error || bottomLabel) && (
+        {bottomLabel && (
           <Box
             className="flex align-center justify-between"
             sx={{ pt: "5px", flexWrap: "nowrap" }}
           >
-            <span
-              className="mont-400"
-              style={{
-                fontSize: "10px",
-                color: "#EB5757",
-                textAlign: "start",
-                marginLeft: "10px",
-                ...errorStyles,
-              }}
-            >
-              {error}
-            </span>
             <span
               className="mont-400"
               onClick={bottomLabelOnClick}

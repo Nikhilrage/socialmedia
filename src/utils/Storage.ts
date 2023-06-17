@@ -10,15 +10,6 @@ export const getLocalItem = (key: any) => {
   }
 };
 
-export const removeItem = (key: any) => {
-  return new Promise((resolve, reject) => {
-    if (!key || typeof key !== "string") {
-      reject("provide proper key type");
-    }
-    resolve(localStorage.removeItem(key));
-  });
-};
-
 export const removeAllItem = () => {
   localStorage.clear();
 };

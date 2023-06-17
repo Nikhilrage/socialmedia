@@ -12,6 +12,9 @@ import SMButton from "../../common/SMButton";
 import LoginSignUpFooter from "../../common/LoginSignUpFooter";
 import LoginSignUpLayout from "../../common/LoginSignUpLayout";
 import "./login.css";
+import { AuthCalls } from "../../api/auth.api";
+import { setLocalItem } from "../../utils/Storage";
+import logo from "../../assets/images/logo.png";
 
 export interface LoginProps {}
 
@@ -22,6 +25,30 @@ const Login = (props: LoginProps) => {
   const { sm } = useDimensions();
 
   const [passwordTypeAsTest, setPasswordTypeAsText] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const loginApiCall = async () => {
+    try {
+      const payload = {
+        email,
+        password,
+      };
+      const res = await AuthCalls.loginCall(payload);
+      if (res?.success) {
+        const loginAccess = {
+          email,
+          token: res?.token,
+          isLoggedIn: true,
+        };
+        setLocalItem("userDetails", loginAccess);
+        dispatch(loginAction(loginAccess));
+        navigate(pathNames.DASHBOARD, { replace: true });
+      }
+    } catch (e) {
+      console.log("error in making login call", e);
+    }
+  };
 
   return (
     <Box sx={{ background: "#161616", height: "100vh" }}>
@@ -42,7 +69,7 @@ const Login = (props: LoginProps) => {
               {sm && (
                 <Box
                   component={"img"}
-                  src={openEye}
+                  src={logo}
                   alt=""
                   width={"57px"}
                   sx={{
@@ -81,12 +108,10 @@ const Login = (props: LoginProps) => {
               <SMInput
                 placeholder="Enter Email"
                 label="Enter Email"
-                error={"Enter registered email"}
+                value={email}
+                onChange={(e: any) => setEmail(e.target.value)}
                 styles={{
                   paddingLeft: "19px",
-                }}
-                errorStyles={{
-                  marginLeft: 22,
                 }}
                 inputContainerStyles={{
                   marginBottom: sm ? "17px" : "22px",
@@ -96,8 +121,9 @@ const Login = (props: LoginProps) => {
                 placeholder="Enter Password"
                 label="Password"
                 type={!passwordTypeAsTest ? "password" : "text"}
+                value={password}
+                onChange={(e: any) => setPassword(e.target.value)}
                 inputIcon={passwordTypeAsTest ? openEye : PasswordEyeClosed}
-                error={"Please enter correct password"}
                 bottomLabel="Forgot Password?"
                 iconOnClickAction={() =>
                   setPasswordTypeAsText(!passwordTypeAsTest)
@@ -110,19 +136,10 @@ const Login = (props: LoginProps) => {
                 inputContainerStyles={{
                   marginBottom: sm ? "15px" : "30px",
                 }}
-                errorStyles={{
-                  marginLeft: 22,
-                }}
                 bottomLabelStyles={{ cursor: "pointer" }}
                 //bottomLabelOnClick={() => navigate(pathNames.FORGOT_PASSWORD)}
               />
-              <SMButton
-                onClick={() => {
-                  dispatch(loginAction(true));
-                  navigate(pathNames.DASHBOARD);
-                }}
-                sx={{ padding: "14px 1px" }}
-              >
+              <SMButton onClick={loginApiCall} sx={{ padding: "14px 1px" }}>
                 Login
               </SMButton>
               <Box sx={{ pt: 4 }}>

@@ -24,7 +24,7 @@ const LoginSignUpFooter = () => {
   return (
     <Box
       className="flex align-center justify-center"
-      sx={{ width: "100%", gap: 6 }}
+      sx={{ width: "100%", gap: 6, flexWrap: "wrap" }}
     >
       {login_SignUpFooterImages.map((item: any, index: number) => (
         <Box
@@ -41,7 +41,6 @@ const LoginSignUpFooter = () => {
               fontWeight: 700,
               fontSize: 22,
               color: "#fff",
-              //color: index % 2 !== 0 ? "#000" : "#fff",
             }}
           >
             {item?.name}
